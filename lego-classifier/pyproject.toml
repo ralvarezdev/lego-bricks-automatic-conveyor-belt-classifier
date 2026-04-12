@@ -1,0 +1,22 @@
+[project]
+name = "lego-classifier"
+version = "0.1.0"
+description = "LEGO Bricks Automatic Conveyor Belt Classifier"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "datasets>=4.8.4",
+    "tensorboard>=2.20.0",
+    "torch",
+    "torchvision",
+    "tqdm>=4.67.3",
+]
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }
