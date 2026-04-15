@@ -1,0 +1,39 @@
+{
+    "project_name": "lego_classifier_v6",
+    "selected_ids": [
+        216,
+        739,
+        445,
+        737,
+        220,
+        443
+    ],
+    "classes": {
+        "216": "3001",
+        "739": "56145",
+        "445": "3649",
+        "737": "55981",
+        "220": "3003",
+        "443": "3648a"
+    },
+    "gates": [
+        {
+            "idx": 0,
+            "name": "First Servo",
+            "lead_time": 0.5,
+            "active_time": 3.0
+        },
+        {
+            "idx": 1,
+            "name": "Second Servo",
+            "lead_time": 0.5,
+            "active_time": 3.0
+        }
+    ],
+    "gate_assignments": {
+        "216": 0,
+        "220": 0,
+        "737": 1,
+        "739": 1
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "project_name": "lego_classifier_v5",
+    "selected_ids": [
+        216,
+        445
+    ],
+    "classes": {
+        "216": "3001",
+        "445": "3649"
+    },
+    "gates": [
+        {
+            "idx": 0,
+            "name": "First Servo",
+            "lead_time": 0.5,
+            "active_time": 3.0
+        },
+        {
+            "idx": 1,
+            "name": "Second Servo",
+            "lead_time": 0.5,
+            "active_time": 3.0
+        }
+    ],
+    "gate_assignments": {
+        "216": 0,
+        "445": 1
+    }
+}
