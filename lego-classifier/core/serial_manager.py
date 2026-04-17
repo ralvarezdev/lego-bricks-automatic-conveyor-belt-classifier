@@ -32,10 +32,26 @@ class SerialManager:
             self.ser = serial.Serial(port, baudrate=baud_rate, timeout=1)
             self.connected = True
             self._log(f"[SYS] Connected to {port} at {baud_rate} baud.")
+
+            # Start background thread to read from ESP32
+            threading.Thread(target=self._read_loop, daemon=True).start()
+
             return True
         except Exception as e:
             self._log(f"[ERR] Serial connection failed: {e}")
             return False
+
+    def _read_loop(self):
+        while self.connected and self.ser and self.ser.is_open:
+            try:
+                if self.ser.in_waiting > 0:
+                    line = self.ser.readline().decode("utf-8").strip()
+                    if line:
+                        self._log(f"[RX] {line}")
+            except Exception as e:
+                self._log(f"[ERR] Error reading from serial: {e}")
+                self.disconnect()
+                break
 
     def disconnect(self):
         if self.ser and self.ser.is_open:

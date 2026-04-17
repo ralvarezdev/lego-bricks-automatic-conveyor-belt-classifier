@@ -12,6 +12,7 @@ dependencies = [
     "onnxruntime>=1.24.4",
     "onnxruntime-gpu>=1.24.4",
     "opencv-python>=4.13.0.92",
+    "paho-mqtt>=2.1.0",
     "pydantic>=2.13.1",
     "pydantic-settings>=2.13.1",
     "pyserial>=3.5",
