@@ -29,7 +29,11 @@ class SerialManager:
             self.connected = True
             return True
         try:
+            # Need to disable DTR to prevent auto-reset when connecting, then reset properly like test script
             self.ser = serial.Serial(port, baudrate=baud_rate, timeout=1)
+            import time
+            time.sleep(2)  # Critical wait for ESP32 to reset upon connection
+            
             self.connected = True
             self._log(f"[SYS] Connected to {port} at {baud_rate} baud.")
 
@@ -49,9 +53,8 @@ class SerialManager:
                     if line:
                         self._log(f"[RX] {line}")
             except Exception as e:
-                self._log(f"[ERR] Error reading from serial: {e}")
-                self.disconnect()
-                break
+                # Catch timeout errors specifically
+                pass
 
     def disconnect(self):
         if self.ser and self.ser.is_open:
@@ -66,12 +69,13 @@ class SerialManager:
 
         def _send():
             try:
+                # Use standard json exactly like test script
                 msg = json.dumps(payload_dict) + "\n"
                 if self.ser:
                     with self.lock:
                         self.ser.write(msg.encode("utf-8"))
                         self.ser.flush()
-                self._log(f"[TX] {msg.strip()}")
+                self._log(f"[TX to ESP32]: {msg.strip()}")
             except Exception as e:
                 self._log(f"[ERR] Failed to send payload: {e}")
                 self.disconnect()

@@ -829,30 +829,47 @@ class LegoStudioApp(ctk.CTk):
 
     def _TriggerSortingRoutine(self, label: str):
         # find ID by class name or assume label is ID
-        # Since onnx outputs ID directly as string right now, we use it directly:
-        gate_idx = self.project.gate_assignments.get(str(label))
+        target_sid = None
+        for sid, name in self.project.classes.items():
+            if name == label or str(sid) == label:
+                target_sid = str(sid)
+                break
+                
+        if target_sid is None:
+            target_sid = str(label)
+
+        gate_idx = self.project.gate_assignments.get(target_sid)
+        
+        self.write_debug_console(f"[VISION] Detected {label} (ID: {target_sid}), Assigned to Gate: {gate_idx}")
+
         if gate_idx is None:
+            self.write_debug_console(f"[VISION] Ignoring {label} - No gate assigned.")
             return
 
         gate_config = next((g for g in self.project.gates if g.idx == gate_idx), None)
         if not gate_config:
+            self.write_debug_console(f"[VISION] Ignoring {label} - Gate {gate_idx} configuration missing.")
             return
 
         if not self.conveyor_fsm.lock_for_processing():
+            # self.write_debug_console("[SYS] Ignored: Conveyor FSM is currently locked.")
             return
 
         payload = {
             "gate_idx": gate_config.idx,
-            "lead_time": gate_config.lead_time,
-            "active_time": gate_config.active_time,
+            "lead_time": int(gate_config.lead_time * 1000),
+            "active_time": int(gate_config.active_time * 1000)
         }
+        
+        self.write_debug_console(f"[SYS] Sending Payload: {payload}")
         success = self.serial_mgr.send_payload(payload)
 
         if success:
             total_lock_time_ms = int(
                 (gate_config.lead_time + gate_config.active_time) * 1000
             )
-            self.after(total_lock_time_ms, self.conveyor_fsm.release_lock)
+            # Give an extra 2 seconds of buffer just like the test script's time.sleep(5)
+            self.after(total_lock_time_ms + 2000, self.conveyor_fsm.release_lock)
         else:
             self.conveyor_fsm.set_error()
             self.write_debug_console("Hardware Communication Failure")

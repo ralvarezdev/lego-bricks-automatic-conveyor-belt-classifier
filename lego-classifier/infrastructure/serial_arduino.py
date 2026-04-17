@@ -35,7 +35,12 @@ class ArduinoController:
                     return False
 
             try:
-                payload = f"{gate_config.idx},{gate_config.lead_time},{gate_config.active_time}\n"
+                import json
+                payload = json.dumps({
+                    "gate_idx": gate_config.idx,
+                    "lead_time": gate_config.lead_time,
+                    "active_time": gate_config.active_time
+                }) + "\n"
                 self._serial.write(payload.encode("utf-8"))
                 return True
             except serial.SerialException:
